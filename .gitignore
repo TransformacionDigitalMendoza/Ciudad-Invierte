@@ -1,0 +1,14 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Backend/OppMapMdzAPI/.vs
+/Backend/OppMapMdzAPI/OppMapMdzAPI/obj
+/Backend/OppMapMdzAPI/OppMapMdzAPI/bin/Debug/net8.0
+/Backend/OppMapMdzAPI/OppMapMdz_Application/bin/Debug/net8.0
+/Backend/OppMapMdzAPI/OppMapMdz_Application/obj
+/Backend/OppMapMdzAPI/OppMapMdz_Domain/bin/Debug/net8.0
+/Backend/OppMapMdzAPI/OppMapMdz_Domain/obj
+/Backend/OppMapMdzAPI/OppMapMdz_Infrastructure/bin/Debug/net8.0
+/Backend/OppMapMdzAPI/OppMapMdz_Infrastructure/obj
