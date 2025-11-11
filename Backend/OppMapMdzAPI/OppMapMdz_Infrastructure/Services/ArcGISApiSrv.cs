@@ -17,7 +17,7 @@ namespace OppMapMdz_Infrastructure.Services
             _repository = repository;
         }
 
-        public async Task<T> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
+        public async Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
         {
             return await _repository.GetFeaturesAsync<T>(endpoint, parametros);
         }

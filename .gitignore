@@ -12,3 +12,9 @@
 /Backend/OppMapMdzAPI/OppMapMdz_Domain/obj
 /Backend/OppMapMdzAPI/OppMapMdz_Infrastructure/bin/Debug/net8.0
 /Backend/OppMapMdzAPI/OppMapMdz_Infrastructure/obj
+/Backend/OppMapMdzAPI/OppMapMdzAPI/bin/Release
+/Backend/OppMapMdzAPI/OppMapMdz_Infrastructure/bin/Release
+/Backend/OppMapMdzAPI/OppMapMdz_Domain/bin/Release
+/Backend/OppMapMdzAPI/OppMapMdz_Application/bin/Release
+/Backend/OppMapMdzAPI/OppMapMdzAPI/Properties/PublishProfiles
+/Backend/OppMapMdzAPI/OppMapMdzAPI/.config

@@ -17,6 +17,12 @@ namespace OppMapMdz_Infrastructure.Services
         {
             _repository = zonificacionRepository;
         }
+
+        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaAsync()
+        {
+            return await _repository.GetPadronZonaAsync();
+        }
+
         public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetZonificacionUsosSuelos(bool returnGeometry = false)
         {
             return await _repository.GetZonificacionUsosSuelos(returnGeometry);

@@ -8,6 +8,6 @@ namespace OppMapMdz_Application.Interfaces.Services
 {
     public interface IArcGISApiSrv
     {
-        Task<T> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros);
+        Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros);
     }
 }

@@ -27,43 +27,62 @@ namespace OppMapMdz_Infrastructure.Repositories
             _configuration = configuration;
             _arcGISConfig = options.Value;
         }
-        public async Task<T> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
+        public async Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
         {
             var httpClient = _httpClient.CreateClient("ArcGIS");
+            var allFeatures = new List<T>();
+            int offset = 0;
+            int pageSize = 1000; // ajustá según el servicio
 
-            string content = null;
             try
             {
-                var uriBuilder = new UriBuilder($"{_arcGISConfig.BaseUrl}{endpoint}/query");
-                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                bool more = true;
 
-                foreach (var param in parametros)
+                while (more)
                 {
-                    query[param.Key] = param.Value;
-                }
+                    var uriBuilder = new UriBuilder($"{_arcGISConfig.BaseUrl}{endpoint}/query");
+                    var query = HttpUtility.ParseQueryString(uriBuilder.Query);
 
-                uriBuilder.Query = query.ToString();
-                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+                    // Agrego parámetros base
+                    foreach (var param in parametros)
+                        query[param.Key] = param.Value;
 
-                using var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+                    // Parámetros de paginación
+                    query["resultOffset"] = offset.ToString();
+                    query["resultRecordCount"] = pageSize.ToString();
+                    query["f"] = "json"; // por si no está
+                    uriBuilder.Query = query.ToString();
 
-                response.EnsureSuccessStatusCode();
+                    var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
 
-                if (response.IsSuccessStatusCode) 
-                {
-                    content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    using var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+
+                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     IsArcGISErrorResponse(content, endpoint);
+
+                    var contentData = JsonConvert.DeserializeObject<JObject>(content);
+                    var features = contentData.SelectToken("features")?.ToObject<List<T>>() ?? new List<T>();
+
+                    allFeatures.AddRange(features);
+
+                    // Verificar si hay más datos
+                    bool exceededTransferLimit = contentData.SelectToken("exceededTransferLimit")?.Value<bool>() ?? false;
+
+                    if (exceededTransferLimit && features.Count > 0)
+                    {
+                        offset += features.Count;
+                    }
+                    else
+                    {
+                        more = false;
+                    }
                 }
 
-                var contentData = JsonConvert.DeserializeObject(content);
-                
-                var data =((JObject)contentData).SelectToken("features").ToObject<T>();
-
-                return data;
-
+                return allFeatures;
             }
             catch (Exception ex)
-            { 
+            {
                 throw new Exception("[ArcGISAPIRepository - GetFeaturesAsync]", ex);
             }
         }

@@ -25,15 +25,35 @@ namespace OppMapMdz_Infrastructure.Repositories
             _arcGISConfig = options.Value;
         }
 
-        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetZonificacionUsosSuelos(bool returnGeometry = false)
+        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaAsync()
         {
+            /*
+             objectid: 1
+            par_nomenc: 030588230061004000004
+            par_pad_mu: 8600001000000
+            nombre_zon: NATURAL DE AMORTIGUACIÓN
+            etiqueta: Zona Especial Natural de Amortiguación
+            zona: NATURAL DE AMORTIGUACIÓN
+             */
+
+            List<KeyValuePair<string, string>> parametros = new List<KeyValuePair<string, string>>();
+            parametros.Add(new KeyValuePair<string, string>("where", "1=1"));
+            parametros.Add(new KeyValuePair<string, string>("outfields", "objectid,par_nomenc,par_pad_mu,nombre_zon,etiqueta,zona"));
+            parametros.Add(new KeyValuePair<string, string>("returnGeometry", "false"));
+            parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
+
+            return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
+        }
+
+        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetZonificacionUsosSuelos(bool returnGeometry = false)
+        { 
             List<KeyValuePair<string,string>> parametros = new List<KeyValuePair<string,string>>();
             parametros.Add(new KeyValuePair<string, string>("where", "1=1"));
             parametros.Add(new KeyValuePair<string, string>("outfields", "*"));
             parametros.Add(new KeyValuePair<string, string>("returnGeometry", returnGeometry ? "true" : "false"));
             parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
 
-            return await _arcGISApiSrv.GetFeaturesAsync<List<ArcGISGetZonificacionUsosSuelo>>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
+            return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
         }
     }
 }

@@ -23,7 +23,13 @@ builder.Services.AddScoped<IZonificacionSrv, ZonificacionSrv>();
 builder.Services.AddScoped<IArcGISAPIRepository, ArcGISApiRepository>();
 builder.Services.AddScoped<IArcGISApiSrv, ArcGISApiSrv>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -46,7 +52,7 @@ app.MapControllers();
 app.Run();
 
 /*
- Controladores:
+Controladores:
 API 
 
 Zonificación
@@ -60,4 +66,4 @@ https://webgis.ciudaddemendoza.gob.ar/server/rest/services/Catastro_p%C3%BAblico
 
 Servicio Calles
 https://webgis.ciudaddemendoza.gob.ar/server/rest/services/Servicio_Calles/FeatureServer    
- */
+*/

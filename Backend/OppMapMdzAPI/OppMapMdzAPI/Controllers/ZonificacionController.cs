@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Writers;
+using Newtonsoft.Json;
 using OppMapMdz_Application.Interfaces.Services;
 using OppMapMdz_Domain.ArcGIS.Zonificacion;
 
@@ -25,6 +26,21 @@ namespace OppMapMdzAPI.Controllers
                 List<ArcGISGetZonificacionUsosSuelo> listZonificacion = await _zonificacionSrv.GetZonificacionUsosSuelos(returnGeometry);
 
                 return Ok(listZonificacion);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("GetPadronZona")]
+        public async Task<IActionResult> GetPadronZona()
+        {
+            try
+            {
+                List<ArcGISGetZonificacionUsosSuelo> listPadronZona = await _zonificacionSrv.GetPadronZonaAsync();
+
+                return Ok(listPadronZona);
             }
             catch (Exception ex)
             {
