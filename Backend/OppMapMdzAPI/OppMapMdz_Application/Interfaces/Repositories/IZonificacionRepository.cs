@@ -10,6 +10,7 @@ namespace OppMapMdz_Application.Interfaces.Repositories
     public interface IZonificacionRepository
     {
         Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaAsync();
+        Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaFilterAsync(long? objectId, string padron, bool returnGeometry = false);
         Task<List<ArcGISGetZonificacionUsosSuelo>> GetZonificacionUsosSuelos(bool returnGeometry = false);
     }
 }

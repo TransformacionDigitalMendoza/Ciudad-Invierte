@@ -55,5 +55,23 @@ namespace OppMapMdz_Infrastructure.Repositories
 
             return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
         }
+
+        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaFilterAsync(long? objectId, string padron, bool returnGeometry = false)
+        {
+            string where = "1=1";
+            if (objectId.HasValue)
+                where += $" AND objectid={objectId.Value}";
+            if(padron != null)
+                where += $" AND par_pad_mu LIKE '%{padron}%'";
+
+            List<KeyValuePair<string, string>> parametros = new List<KeyValuePair<string, string>>();
+            parametros.Add(new KeyValuePair<string, string>("where", where));
+            parametros.Add(new KeyValuePair<string, string>("outfields", "objectid,par_nomenc,par_pad_mu,nombre_zon,etiqueta,zona"));
+            parametros.Add(new KeyValuePair<string, string>("returnGeometry", returnGeometry ? "true" : "false"));
+            parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
+
+            return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
+
+        }
     }
 }

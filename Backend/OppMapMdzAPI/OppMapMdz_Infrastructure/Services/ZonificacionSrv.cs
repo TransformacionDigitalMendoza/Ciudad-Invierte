@@ -23,6 +23,11 @@ namespace OppMapMdz_Infrastructure.Services
             return await _repository.GetPadronZonaAsync();
         }
 
+        public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetPadronZonaFilterAsync(long? objectId, string padron, bool returnGeometry = false)
+        {
+            return await _repository.GetPadronZonaFilterAsync(objectId, padron, returnGeometry);
+        }
+
         public async Task<List<ArcGISGetZonificacionUsosSuelo>> GetZonificacionUsosSuelos(bool returnGeometry = false)
         {
             return await _repository.GetZonificacionUsosSuelos(returnGeometry);

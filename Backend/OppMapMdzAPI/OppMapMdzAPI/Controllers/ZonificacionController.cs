@@ -47,5 +47,20 @@ namespace OppMapMdzAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("GetPadronZonaFilter")]
+        public async Task<IActionResult> GetPadronZonaFilter(long? objectId = null, string padron = null, bool returnGeometry = false)
+        {
+            try
+            {
+                List<ArcGISGetZonificacionUsosSuelo> listPadronZona = await _zonificacionSrv.GetPadronZonaFilterAsync(objectId, padron, returnGeometry);
+
+                return Ok(listPadronZona);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
