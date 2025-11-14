@@ -1,0 +1,244 @@
+{
+	"info": {
+		"_postman_id": "b9736a33-54a9-4910-a9b3-aa1520975772",
+		"name": "OppMapMdz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3792306"
+	},
+	"item": [
+		{
+			"name": "Dev",
+			"item": [
+				{
+					"name": "ZonificacionUsosSuelo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLDev}}/api/zonificacion/GetUsosSuelo",
+							"host": [
+								"{{baseURLDev}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetUsosSuelo"
+							],
+							"query": [
+								{
+									"key": "returnGeometry",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPadronZona",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLDev}}/api/zonificacion/GetPadronZona",
+							"host": [
+								"{{baseURLDev}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetPadronZona"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Version",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLDev}}/api/Version",
+							"host": [
+								"{{baseURLDev}}"
+							],
+							"path": [
+								"api",
+								"Version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPadronZonaFilter",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLDev}}/api/zonificacion/GetPadronZonaFilter?padron=600001000",
+							"host": [
+								"{{baseURLDev}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetPadronZonaFilter"
+							],
+							"query": [
+								{
+									"key": "objectId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "padron",
+									"value": "600001000"
+								},
+								{
+									"key": "returnGeometry",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PROD",
+			"item": [
+				{
+					"name": "ZonificacionUsosSuelo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLProd}}/api/zonificacion/GetUsosSuelo",
+							"host": [
+								"{{baseURLProd}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetUsosSuelo"
+							],
+							"query": [
+								{
+									"key": "returnGeometry",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPadronZona",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLProd}}/api/zonificacion/GetPadronZona",
+							"host": [
+								"{{baseURLProd}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetPadronZona"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Version",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLProd}}/api/Version",
+							"host": [
+								"{{baseURLProd}}"
+							],
+							"path": [
+								"api",
+								"Version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPadronZonaFilter",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURLProd}}/api/zonificacion/GetPadronZonaFilter?objectId=1&padron=600001000&returnGeometry=false",
+							"host": [
+								"{{baseURLProd}}"
+							],
+							"path": [
+								"api",
+								"zonificacion",
+								"GetPadronZonaFilter"
+							],
+							"query": [
+								{
+									"key": "objectId",
+									"value": "1"
+								},
+								{
+									"key": "padron",
+									"value": "600001000"
+								},
+								{
+									"key": "returnGeometry",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURLDev",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "baseURLProd",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
