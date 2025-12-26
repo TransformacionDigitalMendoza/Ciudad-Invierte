@@ -40,6 +40,7 @@ namespace OppMapMdz_Infrastructure.Repositories
             parametros.Add(new KeyValuePair<string, string>("where", "1=1"));
             parametros.Add(new KeyValuePair<string, string>("outfields", "objectid,par_nomenc,par_pad_mu,nombre_zon,etiqueta,zona"));
             parametros.Add(new KeyValuePair<string, string>("returnGeometry", "false"));
+            parametros.Add(new KeyValuePair<string, string>("outSR", "4326"));
             parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
 
             return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
@@ -51,6 +52,7 @@ namespace OppMapMdz_Infrastructure.Repositories
             parametros.Add(new KeyValuePair<string, string>("where", "1=1"));
             parametros.Add(new KeyValuePair<string, string>("outfields", "*"));
             parametros.Add(new KeyValuePair<string, string>("returnGeometry", returnGeometry ? "true" : "false"));
+            parametros.Add(new KeyValuePair<string, string>("outSR", "4326"));
             parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
 
             return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);
@@ -68,6 +70,7 @@ namespace OppMapMdz_Infrastructure.Repositories
             parametros.Add(new KeyValuePair<string, string>("where", where));
             parametros.Add(new KeyValuePair<string, string>("outfields", "objectid,par_nomenc,par_pad_mu,nombre_zon,etiqueta,zona"));
             parametros.Add(new KeyValuePair<string, string>("returnGeometry", returnGeometry ? "true" : "false"));
+            parametros.Add(new KeyValuePair<string, string>("outSR", "4326"));
             parametros.Add(new KeyValuePair<string, string>("f", "pjson"));
 
             return await _arcGISApiSrv.GetFeaturesAsync<ArcGISGetZonificacionUsosSuelo>(_arcGISConfig.ZonificacionUsosSuelosLayer, parametros);

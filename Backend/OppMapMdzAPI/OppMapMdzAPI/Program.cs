@@ -7,6 +7,18 @@ using OppMapMdz_Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()   // o dominios específicos
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 builder.Services.Configure<ArcGISConfig>(
     builder.Configuration.GetSection("ArcGISServices")
 );
@@ -48,6 +60,9 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
+
+// CORS SIEMPRE ANTES de Authorization
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
