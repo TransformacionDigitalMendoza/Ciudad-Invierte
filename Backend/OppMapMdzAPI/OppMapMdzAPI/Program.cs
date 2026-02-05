@@ -32,6 +32,9 @@ builder.Services.AddHttpClient("ArcGIS", httpClient =>
 builder.Services.AddScoped<IZonificacionRepository,ZonificacionRepository>();
 builder.Services.AddScoped<IZonificacionSrv, ZonificacionSrv>();
 
+builder.Services.AddScoped<IComercioRepository, ComercioRepository>();
+builder.Services.AddScoped<IComercioSrv, ComercioSrv>();
+
 builder.Services.AddScoped<IArcGISAPIRepository, ArcGISApiRepository>();
 builder.Services.AddScoped<IArcGISApiSrv, ArcGISApiSrv>();
 

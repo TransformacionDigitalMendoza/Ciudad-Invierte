@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OppMapMdz_Domain.ArcGIS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,7 @@ namespace OppMapMdz_Application.Interfaces.Repositories
     public interface IArcGISAPIRepository
     {
         Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros);
+        Task<ArcGISToken> GenerateTokenAsync();
+        Task<GeometryBufferResponse> BufferAsync(GeometryBufferRequest request);
     }
 }

@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OppMapMdz_Domain.ArcGIS;
 using Microsoft.Extensions.Options;
+using System.Net;
+using System.Globalization;
+using System.Text.Json;
 
 namespace OppMapMdz_Infrastructure.Repositories
 {
@@ -27,6 +30,46 @@ namespace OppMapMdz_Infrastructure.Repositories
             _configuration = configuration;
             _arcGISConfig = options.Value;
         }
+
+        public async Task<ArcGISToken> GenerateTokenAsync()
+        {
+            var httpClient = _httpClient.CreateClient("ArcGIS");
+
+            try
+            {
+                var uriBuilder = new UriBuilder($"{_arcGISConfig.GenerateTokenUrl}");
+                var parameters = new[] {
+                        new KeyValuePair<string, string>("username", _arcGISConfig.Username),
+                        new KeyValuePair<string, string>("password", _arcGISConfig.Password),
+                        new KeyValuePair<string, string>("referer", _arcGISConfig.Referer),
+                        new KeyValuePair<string, string>("expiration","5"),
+                        new KeyValuePair<string, string>("f","pjson")
+                    };
+
+                var requestMessage = new HttpRequestMessage
+                {
+                    RequestUri = uriBuilder.Uri,
+                    Method = HttpMethod.Post,
+                    Content = new FormUrlEncodedContent(parameters)
+                };
+
+                using var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                IsArcGISErrorResponse(content, uriBuilder.Uri.ToString());
+
+                var contentData = JsonConvert.DeserializeObject<JObject>(content);
+                var features = contentData.ToObject<ArcGISToken>() ?? new ArcGISToken();
+
+                return features;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("[ArcGISAPIRepository - GenerateTokenAsync]", ex);
+            }
+        }
+
         public async Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
         {
             var httpClient = _httpClient.CreateClient("ArcGIS");
@@ -41,19 +84,16 @@ namespace OppMapMdz_Infrastructure.Repositories
                 while (more)
                 {
                     var uriBuilder = new UriBuilder($"{_arcGISConfig.BaseUrl}{endpoint}/query");
-                    var query = HttpUtility.ParseQueryString(uriBuilder.Query);
 
-                    // Agrego parámetros base
-                    foreach (var param in parametros)
-                        query[param.Key] = param.Value;
+                    parametros.Add(new KeyValuePair<string, string>("resultOffset", offset.ToString()));
+                    parametros.Add(new KeyValuePair<string, string>("resultRecordCount", pageSize.ToString()));
 
-                    // Parámetros de paginación
-                    query["resultOffset"] = offset.ToString();
-                    query["resultRecordCount"] = pageSize.ToString();
-                    query["f"] = "json"; // por si no está
-                    uriBuilder.Query = query.ToString();
-
-                    var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+                    var requestMessage = new HttpRequestMessage
+                    {
+                        RequestUri = uriBuilder.Uri,
+                        Method = HttpMethod.Post,
+                        Content = new FormUrlEncodedContent(parametros)
+                    };
 
                     using var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
@@ -85,6 +125,54 @@ namespace OppMapMdz_Infrastructure.Repositories
             {
                 throw new Exception("[ArcGISAPIRepository - GetFeaturesAsync]", ex);
             }
+        }
+
+        public async Task<GeometryBufferResponse> BufferAsync(GeometryBufferRequest request)
+        {
+            // Obtener token
+            var token = await GenerateTokenAsync();
+            if (string.IsNullOrWhiteSpace(token.token))
+                throw new InvalidOperationException("ArcGIS token inválido");
+
+            var payload = new Dictionary<string, string>
+            {
+                ["f"] = "json",
+                ["geometries"] = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    geometryType = "esriGeometryPoint",
+                    geometries = request.Geometries.Select(g => new
+                    {
+                        x = g.X,
+                        y = g.Y
+                    })
+                }),
+                ["inSR"] = "4326",
+                ["bufferSR"] = "32719",
+                ["outSR"] = "4326",
+                ["distances"] = request.Distance.ToString(CultureInfo.InvariantCulture),
+                ["units"] = request.Units,
+                ["unionResults"] = request.UnionResults.ToString().ToLower(),
+                ["geodesic"] = request.Geodesic.ToString().ToLower(),
+                ["token"] = token.token
+            };
+
+            if (request.OutSR.HasValue)
+                payload["outSR"] = request.OutSR.Value.ToString();
+
+            var httpClient = _httpClient.CreateClient("ArcGIS");
+
+            var response = await httpClient.PostAsync(
+                $"{_arcGISConfig.BaseUrl}{_arcGISConfig.BufferSrvUrl}",
+                new FormUrlEncodedContent(payload));
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return System.Text.Json.JsonSerializer.Deserialize<GeometryBufferResponse>(
+                json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            )!;
         }
 
         private void IsArcGISErrorResponse(string content, string endpoint)

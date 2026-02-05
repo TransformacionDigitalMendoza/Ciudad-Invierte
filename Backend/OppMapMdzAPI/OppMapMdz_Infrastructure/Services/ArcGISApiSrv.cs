@@ -1,5 +1,6 @@
 ﻿using OppMapMdz_Application.Interfaces.Repositories;
 using OppMapMdz_Application.Interfaces.Services;
+using OppMapMdz_Domain.ArcGIS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,11 @@ namespace OppMapMdz_Infrastructure.Services
         public async Task<List<T>> GetFeaturesAsync<T>(string endpoint, List<KeyValuePair<string, string>> parametros)
         {
             return await _repository.GetFeaturesAsync<T>(endpoint, parametros);
+        }
+
+        public async Task<GeometryBufferResponse> BufferAsync(GeometryBufferRequest request)
+        {
+            return await _repository.BufferAsync(request);
         }
     }
 }

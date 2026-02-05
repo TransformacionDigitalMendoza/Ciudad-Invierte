@@ -12,7 +12,25 @@ namespace OppMapMdz_Domain.ArcGIS
         [JsonProperty("baseUrl")]
         public string BaseUrl { get; set; }
 
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+
+        [JsonProperty("referer")]
+        public string Referer { get; set; }
+
+        [JsonProperty("generateTokenUrl")]
+        public string GenerateTokenUrl { get; set; }
+
         [JsonProperty("zonificacionUsosSuelosLayer")]
         public string ZonificacionUsosSuelosLayer { get; set; }
+
+        [JsonProperty("comercioLayer")]
+        public string ComercioLayer { get; set; }
+
+        [JsonProperty("bufferSrvUrl")]
+        public string BufferSrvUrl { get; set; }
     }
 }
