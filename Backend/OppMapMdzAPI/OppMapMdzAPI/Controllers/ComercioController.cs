@@ -18,7 +18,7 @@ namespace OppMapMdzAPI.Controllers
             _comercioSrv = comercioSrv;
         }
 
-        [HttpGet("GetComerciosBuffer")]
+        [HttpPost("GetComerciosBuffer")]
         public async Task<IActionResult> GetComerciosBuffer(ComercioBufferRequest request)
         {
             try

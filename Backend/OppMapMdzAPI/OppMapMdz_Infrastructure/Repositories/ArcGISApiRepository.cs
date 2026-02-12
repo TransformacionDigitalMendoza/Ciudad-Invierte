@@ -57,9 +57,11 @@ namespace OppMapMdz_Infrastructure.Repositories
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                IsArcGISErrorResponse(content, uriBuilder.Uri.ToString());
 
                 var contentData = JsonConvert.DeserializeObject<JObject>(content);
+
+                IsArcGISErrorResponse(contentData, uriBuilder.Uri.ToString());
+
                 var features = contentData.ToObject<ArcGISToken>() ?? new ArcGISToken();
 
                 return features;
@@ -85,23 +87,34 @@ namespace OppMapMdz_Infrastructure.Repositories
                 {
                     var uriBuilder = new UriBuilder($"{_arcGISConfig.BaseUrl}{endpoint}/query");
 
-                    parametros.Add(new KeyValuePair<string, string>("resultOffset", offset.ToString()));
-                    parametros.Add(new KeyValuePair<string, string>("resultRecordCount", pageSize.ToString()));
+                    var requestParams = new List<KeyValuePair<string, string>>(parametros)
+                    {
+                        new("resultOffset", offset.ToString()),
+                        new("resultRecordCount", pageSize.ToString())
+                    };
 
                     var requestMessage = new HttpRequestMessage
                     {
                         RequestUri = uriBuilder.Uri,
                         Method = HttpMethod.Post,
-                        Content = new FormUrlEncodedContent(parametros)
+                        Content = new FormUrlEncodedContent(requestParams)
                     };
 
                     using var response = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
                     response.EnsureSuccessStatusCode();
 
-                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    IsArcGISErrorResponse(content, endpoint);
+                    //var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                    var contentData = JsonConvert.DeserializeObject<JObject>(content);
+                    await using var stream = await response.Content.ReadAsStreamAsync();
+                    using var sr = new StreamReader(stream);
+                    using var reader = new JsonTextReader(sr);
+
+                    var serializer = new Newtonsoft.Json.JsonSerializer();
+                    var contentData = serializer.Deserialize<JObject>(reader);
+
+                    IsArcGISErrorResponse(contentData, endpoint);
+
+                    //var contentData = JsonConvert.DeserializeObject<JObject>(content);
                     var features = contentData.SelectToken("features")?.ToObject<List<T>>() ?? new List<T>();
 
                     allFeatures.AddRange(features);
@@ -175,10 +188,9 @@ namespace OppMapMdz_Infrastructure.Repositories
             )!;
         }
 
-        private void IsArcGISErrorResponse(string content, string endpoint)
+        private void IsArcGISErrorResponse(JObject content, string endpoint)
         {
-            var error = JsonConvert.DeserializeObject<ArcGISErrorResponse>(content);
-            if (error.Error != null)
+            if (content["error"] != null)
             {
                 throw new Exception($"[ArcGISAPIRepository - GetFeaturesAsync] Error al consultar servicio: {endpoint}\nResponse: {content}");
             }
