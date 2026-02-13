@@ -1,0 +1,565 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8f9fa;
+}
+
+#app {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+#sidebar {
+  width: 360px;
+  padding: 24px;
+  background: white;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+#map {
+  flex: 1;
+  height: 100%;
+  z-index: 1;
+  background: #f1f5f9; /* Fondo gris claro para mapa plano */
+}
+
+/* Ocultar atribuciones y controles de Leaflet no deseados */
+.leaflet-control-attribution,
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Mostrar solo nuestro control de zoom personalizado */
+.leaflet-control-zoom {
+  display: block !important;
+  border: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+  background: white !important;
+  color: #0f172a !important;
+  border: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  font-size: 18px !important;
+  transition: all 0.2s;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #f8fafc !important;
+  color: #3b82f6 !important;
+}
+
+/* Estilo para marcador personalizado */
+.custom-marker {
+  background: transparent;
+  border: none;
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07));
+}
+
+/* Resto de estilos existentes... */
+.buscador-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.buscador-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+}
+
+#inputDireccion {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  transition: all 0.2s;
+  margin-top: 0;
+}
+
+#inputDireccion:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+#btnBuscar {
+  width: auto;
+  padding: 12px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#btnBuscar:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.filtros-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.filtros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filtros-header h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+#btnAbrirFiltros {
+  width: auto;
+  padding: 8px 16px;
+  background: #ffffff;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin: 0;
+}
+
+#btnAbrirFiltros:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Estilos para capas públicas */
+.capas-publicas-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.capas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.capas-header:hover {
+  opacity: 0.8;
+}
+
+.capa-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.capa-item:hover {
+  background: #f1f5f9 !important;
+  transform: translateX(2px);
+  border-color: #94a3b8 !important;
+}
+
+.capa-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.capa-item input[type="checkbox"]:checked {
+  transform: scale(1.1);
+}
+
+.btn-capas {
+  transition: all 0.2s;
+  flex: 1;
+  justify-content: center;
+}
+
+.btn-capas:hover {
+  background: #e2e8f0 !important;
+  transform: translateY(-1px);
+}
+
+#capasPublicasLista {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#capasPublicasLista::-webkit-scrollbar {
+  width: 6px;
+}
+
+#capasPublicasLista::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+#capasPublicasLista::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+#capasPublicasLista::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Panel de resultados flotante */
+.panel-resultados-flotante {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 340px;
+  max-height: calc(100vh - 48px);
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.panel-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.resultados-count {
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+#listaResultados {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 140px);
+}
+
+.comercio-card {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.comercio-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 16px rgba(59,130,246,0.08);
+  transform: translateY(-2px);
+}
+
+.comercio-nombre {
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.comercio-direccion {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comercio-usos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comercio-usos li {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-message {
+  text-align: center;
+  color: #94a3b8;
+  padding: 32px 16px;
+  font-size: 14px;
+}
+
+/* Modal de filtros */
+#modalFiltros {
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  width: 440px;
+  max-height: 80vh;
+  padding: 24px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.modal-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.modal-subtitulo {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.usos-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+  max-height: 400px;
+}
+
+.btn-uso {
+  border: 1px solid #e2e8f0;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  background: white;
+  color: #334155;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-uso:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.btn-uso.activo {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-cancelar {
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #f8fafc;
+}
+
+.btn-aplicar {
+  padding: 8px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-aplicar:hover {
+  background: #2563eb;
+}
+
+/* Tags de filtros */
+.tag-filtro {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #0f172a;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tag-filtro:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #d1d5db 100%);
+  transform: translateY(-1px);
+}
+
+.filtros-activos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Estilos para el modal de filtros categorizado */
+#modalFiltros .modal-content {
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.categoria-tab {
+  transition: all 0.2s ease;
+}
+
+.categoria-tab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.categoria-tab.activo {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+.uso-label {
+  transition: all 0.2s ease;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uso-label:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59,130,246,0.1);
+  border-color: #3b82f6 !important;
+}
+
+.btn-seleccionar-subcategoria {
+  transition: all 0.2s ease;
+  font-size: 11px;
+}
+
+.btn-seleccionar-subcategoria:hover {
+  background: #f8fafc !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+/* Scroll personalizado para el modal */
+#contenedorSubcategoriasModal::-webkit-scrollbar {
+  width: 6px;
+}
+
+#contenedorSubcategoriasModal::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+#contenedorSubcategoriasModal::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+#contenedorSubcategoriasModal::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
